@@ -1,0 +1,71 @@
+package telegram
+
+import (
+	"TG_Bot_Admin/internal/pkg/domain/entity"
+	"TG_Bot_Admin/internal/pkg/domain/menu"
+	"TG_Bot_Admin/internal/pkg/domain/texts"
+	"TG_Bot_Admin/internal/pkg/service/telegram/auth"
+	"context"
+	"fmt"
+
+	"github.com/go-telegram/bot"
+	"github.com/go-telegram/bot/models"
+)
+
+// UserSourceStates - Переменная для хранения информации о диалоге с пользователем.
+var UserSourceStates = make(map[int64]menu.KeyName)
+
+func (h *Handler) createLibrarianBookSourceHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
+	b.AnswerCallbackQuery(ctx, &bot.AnswerCallbackQueryParams{
+		CallbackQueryID: update.CallbackQuery.ID,
+	})
+
+	userID := update.CallbackQuery.From.ID
+	chatID := update.CallbackQuery.Message.Message.Chat.ID
+
+	if auth.SuperAdmin != auth.GetUserCategory(userID) {
+		// отправляемся в меню по умолчанию
+		h.DefaultAnswerMenu(ctx, b, chatID, librarian_admin_start)
+	}
+
+	h.createLibrarianBookSourceMenu(ctx, b, chatID, userID)
+}
+
+func (h *Handler) createLibrarianBookSourceMenu(ctx context.Context, b *bot.Bot, chatID, userID int64) {
+	//TODO проверка, что у данного пользователя ещё нет заготовки источника
+
+	//создаём запись о книге.
+	book, err := h.adminService.CreateLibrarianSourceItem(ctx, entity.BookSourceType, userID)
+	if err != nil {
+		fmt.Errorf("create librarian book source menu error: %w", err)
+	}
+
+	// отмечаем, что данный пользователь начал создание источника
+	UserSourceStates[userID] = menu.CreateSource
+
+	// получаем текст для заголовка сообщения
+	messageText := h.presenter.TextMessageToCreateSource(book)
+
+	//TODO формируем набор кнопок - убрать в функцию презентера
+
+	kb := &models.InlineKeyboardMarkup{
+		InlineKeyboard: [][]models.InlineKeyboardButton{
+			{
+				{Text: menu.DoNotCreateSource.String(), CallbackData: default_menu}, //TODO сделать handler
+			},
+			{
+				{Text: BackTo + Library, CallbackData: general_start},
+			},
+			{
+				{Text: BackTo + ReconComGroup, URL: texts.KeyURLReconComGroupURL.String()},
+			},
+		},
+	}
+
+	b.SendMessage(ctx, &bot.SendMessageParams{
+		ChatID:      chatID,
+		Text:        messageText,
+		ReplyMarkup: kb,
+		ParseMode:   models.ParseModeMarkdown,
+	})
+}

@@ -1,0 +1,8 @@
+services:
+  tg-bot-admin:
+    build: .
+    image: antontyurin/tg-bot-admin:latest
+    container_name: tg-bot-admin
+    restart: unless-stopped
+    env_file:
+      - .env

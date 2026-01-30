@@ -1,0 +1,125 @@
+version: "3"
+
+dotenv: ['.env']
+
+tasks:
+  run:
+    desc: "Запуск для отладки"
+    cmds:
+      - go run cmd/tg_bot_admin/main.go
+
+  # ========== MIGRATION COMMANDS ==========
+  migration:
+    desc: Создать новую миграцию
+    interactive: true
+    cmds:
+      - |
+        read -p "Введите название миграции: " name
+        goose -dir={{.MIGRATIONS_DIR}} create "$name" sql
+
+  migrate:up:
+    desc: Применить все миграции
+    cmds:
+      - goose -dir={{.MIGRATIONS_DIR}} {{.GOOSE_DB_TYPE}} {{.DB_PATH}} up
+
+  migrate:up-by-one:
+    desc: Применить следующую миграцию
+    cmds:
+      - goose -dir={{.MIGRATIONS_DIR}} {{.GOOSE_DB_TYPE}} {{.DB_PATH}} up-by-one
+
+  migrate:down:
+    desc: Откатить последнюю миграцию
+    cmds:
+      - goose -dir={{.MIGRATIONS_DIR}} {{.GOOSE_DB_TYPE}} {{.DB_PATH}} down
+
+  migrate:down-to:
+    desc: Откатить миграции до указанной версии
+    cmds:
+      - |
+        if [ -z "{{.CLI_ARGS}}" ]; then
+          echo "Использование: task migrate:down-to -- 20240101000000"
+          exit 1
+        fi
+        goose -dir={{.MIGRATIONS_DIR}} {{.GOOSE_DB_TYPE}} {{.DB_PATH}} down-to {{.CLI_ARGS}}
+
+  migrate:status:
+    desc: Показать статус миграций
+    cmds:
+      - goose -dir={{.MIGRATIONS_DIR}} {{.GOOSE_DB_TYPE}} {{.DB_PATH}} status
+
+  migrate:redo:
+    desc: Перезапустить последнюю миграцию
+    cmds:
+      - goose -dir={{.MIGRATIONS_DIR}} {{.GOOSE_DB_TYPE}} {{.DB_PATH}} redo
+
+  migrate:fix:
+    desc: Исправить версию миграции
+    cmds:
+      - goose -dir={{.MIGRATIONS_DIR}} {{.GOOSE_DB_TYPE}} {{.DB_PATH}} fix
+
+  migrate:version:
+    desc: Установить конкретную версию миграции
+    cmds:
+      - |
+        if [ -z "{{.CLI_ARGS}}" ]; then
+          echo "Использование: task migrate:version -- 20240101000000"
+          exit 1
+        fi
+        goose -dir={{.MIGRATIONS_DIR}} {{.GOOSE_DB_TYPE}} {{.DB_PATH}} version {{.CLI_ARGS}}
+
+  migrate:new:
+    desc: Создать и применить миграцию
+    interactive: true
+    cmds:
+      - |
+        read -p "Введите название миграции: " name
+        goose -dir={{.MIGRATIONS_DIR}} create "$name" sql
+        goose -dir={{.MIGRATIONS_DIR}} {{.GOOSE_DB_TYPE}} {{.DB_PATH}} up
+  
+
+  default:
+    desc: "Показывает справку"
+    cmds:
+      - echo "Доступные команды:"
+      - echo "  build    - Собрать Docker образ"
+      - echo "  run      - Запустить контейнер"
+      - echo "  up       - Запустить через docker-compose"
+      - echo "  down     - Остановить"
+      - echo "  logs     - Показать логи"
+      - echo "  dev      - Запустить в режиме разработки"
+      - echo "  test     - Запустить тесты"
+
+  docker:build:
+    desc: "Собрать Docker образ"
+    cmds:
+      - docker build --platform linux/arm64 -t antontyurin/tg-bot-admin:latest .
+
+  docker:run:
+    desc: "Запустить контейнер для теста"
+    cmds:
+      - docker run --rm --platform linux/arm64 --env-file .env antontyurin/tg-bot-admin:latest
+
+  docker:up:
+    desc: "Запустить через docker-compose"
+    cmds:
+      - docker-compose up -d
+
+  docker:down:
+    desc: "Остановить контейнеры"
+    cmds:
+      - docker-compose down
+
+  docker:logs:
+    desc: "Показать логи"
+    cmds:
+      - docker-compose logs -f
+
+  docker:dev:
+    desc: "Запустить в режиме разработки"
+    cmds:
+      - TG_BOT_ADMIN_TOKEN="{{.TG_BOT_ADMIN_TOKEN}}" go run cmd/tg_bot_admin/main.go
+
+  docker:test:
+    desc: "Запустить тесты"
+    cmds:
+      - go test ./...
