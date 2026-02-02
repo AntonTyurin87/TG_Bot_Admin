@@ -34,6 +34,8 @@ func deleteFileQuery(query files.Delete) sq.DeleteBuilder {
 		where[dto.FilesColumnSourceID] = query.SourceIDs
 	}
 
+	deleteQuery = deleteQuery.Where(where)
+
 	deleteQuery = deleteQuery.Suffix(fmt.Sprintf("RETURNING %s", dto.FilesColumnID))
 
 	return deleteQuery

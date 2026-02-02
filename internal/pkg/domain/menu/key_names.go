@@ -7,7 +7,7 @@ const (
 	UnknownKeyName KeyName = "Неизвестная кнопка"
 
 	CreateSource        KeyName = "➕ Добавить источник"
-	DoNotCreateSource   KeyName = "🚽 Не создавать источник"
+	DoNotCreateSource   KeyName = "🙅 Не создавать это источник"
 	SaveLibrarianSource KeyName = "💾 Сохранить источник"
 
 	CreateBookSource     KeyName = "📘 Добавить книгу"

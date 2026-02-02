@@ -15,6 +15,7 @@ const (
 	create_librarian_source      = "/create_librarian_source"
 	create_librarian_book_source = "/create_librarian_book_source"
 	create_source_default        = "/create_source_default"
+	delete_source_default        = "/delete_source_default"
 
 	work_with_sources = "/work_with_sources"
 

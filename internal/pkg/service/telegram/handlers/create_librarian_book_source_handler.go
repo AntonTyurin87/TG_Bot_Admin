@@ -28,20 +28,21 @@ func (h *Handler) createLibrarianBookSourceHandler(ctx context.Context, b *bot.B
 		h.DefaultAnswerMenu(ctx, b, chatID, librarian_admin_start)
 	}
 
+	// проверка, что у данного пользователя ещё нет заготовки источника
+	if h.adminService.IsAnyNotFinishedSource(ctx, userID) {
+		h.continueSourceCreatingMenu(ctx, b, chatID, userID)
+		return
+	}
+
 	h.createLibrarianBookSourceMenu(ctx, b, chatID, userID)
 }
 
 func (h *Handler) createLibrarianBookSourceMenu(ctx context.Context, b *bot.Bot, chatID, userID int64) {
-	//TODO проверка, что у данного пользователя ещё нет заготовки источника
-
 	//создаём запись о книге.
 	book, err := h.adminService.CreateLibrarianSourceItem(ctx, entity.BookSourceType, userID)
 	if err != nil {
 		fmt.Errorf("create librarian book source menu error: %w", err)
 	}
-
-	// отмечаем, что данный пользователь начал создание источника
-	UserSourceStates[userID] = menu.CreateSource
 
 	// получаем текст для заголовка сообщения
 	messageText := h.presenter.TextMessageToCreateSource(book)
@@ -51,7 +52,42 @@ func (h *Handler) createLibrarianBookSourceMenu(ctx context.Context, b *bot.Bot,
 	kb := &models.InlineKeyboardMarkup{
 		InlineKeyboard: [][]models.InlineKeyboardButton{
 			{
-				{Text: menu.DoNotCreateSource.String(), CallbackData: default_menu}, //TODO сделать handler
+				{Text: menu.DoNotCreateSource.String(), CallbackData: delete_source_default}, //TODO сделать handler
+			},
+			{
+				{Text: BackTo + Library, CallbackData: general_start},
+			},
+			{
+				{Text: BackTo + ReconComGroup, URL: texts.KeyURLReconComGroupURL.String()},
+			},
+		},
+	}
+
+	b.SendMessage(ctx, &bot.SendMessageParams{
+		ChatID:      chatID,
+		Text:        messageText,
+		ReplyMarkup: kb,
+		ParseMode:   models.ParseModeMarkdown,
+	})
+}
+
+func (h *Handler) continueSourceCreatingMenu(ctx context.Context, b *bot.Bot, chatID, userID int64) {
+	source, err := h.adminService.SelectLibrarianSourceItem(ctx, userID)
+	if err != nil {
+		fmt.Errorf("h.adminService.SelectLibrarianSourceItem: %w", err)
+	}
+
+	if source == nil {
+		return
+	}
+
+	// получаем текст для заголовка сообщения
+	messageText := h.presenter.TextMessageToContinueSource(source)
+
+	kb := &models.InlineKeyboardMarkup{
+		InlineKeyboard: [][]models.InlineKeyboardButton{
+			{
+				{Text: menu.DoNotCreateSource.String(), CallbackData: delete_source_default},
 			},
 			{
 				{Text: BackTo + Library, CallbackData: general_start},

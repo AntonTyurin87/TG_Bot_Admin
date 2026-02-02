@@ -29,6 +29,11 @@ func deleteSourceQuery(query sources.Delete) sq.DeleteBuilder {
 	if len(query.IDs) > 0 {
 		where[dto.SourcesColumnID] = query.IDs
 	}
+	if len(query.UserIDs) > 0 {
+		where[dto.SourcesColumnUserID] = query.UserIDs
+	}
+
+	deleteQuery = deleteQuery.Where(where)
 
 	deleteQuery = deleteQuery.Suffix(fmt.Sprintf("RETURNING %s", dto.SourcesColumnID))
 

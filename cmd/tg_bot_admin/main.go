@@ -65,4 +65,17 @@ func main() {
 	//go func() {
 	telegramBot.Start(ctx)
 	//}()
+
+	//// Создание Telegram бота
+	//telegramBot, err := telegram.CreateTelegramBotWithLocalAPI(handler)
+	//fmt.Errorf("создание TG_Bot_Admin не состоялось! - %w", err) //TODO обработка ошибки
+	//if err != nil {
+	//	panic(err) //TODO а может как-то иначе надо
+	//}
+	//
+	//ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	//defer stop()
+	//
+	//log.Println("Бот запущен...")
+	//telegramBot.Start(ctx)
 }

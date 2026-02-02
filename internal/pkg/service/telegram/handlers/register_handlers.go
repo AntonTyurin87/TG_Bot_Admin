@@ -20,6 +20,7 @@ func (h *Handler) RegisterHandlers(b *bot.Bot) {
 	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, create_librarian_source, bot.MatchTypeExact, h.adminCreateLibrarianSourceHandler)
 	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, create_librarian_book_source, bot.MatchTypeExact, h.createLibrarianBookSourceHandler)
 	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, create_source_default, bot.MatchTypeExact, h.createLibrarianBookSourceHandler)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, delete_source_default, bot.MatchTypeExact, h.deleteSourceDefaultHandler)
 	// Меню для SimpleUser
 
 	//Обработчик всех текстовых сообщений

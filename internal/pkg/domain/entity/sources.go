@@ -15,7 +15,8 @@ const (
 	SourceYearStep        Step = 5
 	SourceDescriptionStep Step = 6
 	SourceLoadFileStep    Step = 7 //Вот тут обновление CreatedAt
-	SourceIsSentStep      Step = 8
+	SourceReadyToSend     Step = 8
+	SourceIsSentStep      Step = 9
 )
 
 func (s Step) GetNextStep() Step {

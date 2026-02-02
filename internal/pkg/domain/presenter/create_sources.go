@@ -31,6 +31,22 @@ func (p *presenter) TextMessageToCreateSource(source *entity.Source) string {
 	return message
 }
 
+// TextMessageToContinueSource ...
+func (p *presenter) TextMessageToContinueSource(source *entity.Source) string {
+	title := p.CollbackKeyNameBySourceType(source.Type)
+	text := p.InstructionsBySourceStep(source.Step)
+
+	sourceState := p.SourceStateText(source)
+
+	message := helpers.EscapeMarkdown(fmt.Sprintf("%s\n\n%s\n\n%s\n%s", title, texts.InstructionsContinueCreatingSource, sourceState, text))
+
+	if text == texts.InstructionsAddSourceSuccess {
+		return fmt.Sprint(message, menu.SaveLibrarianSource)
+	}
+
+	return message
+}
+
 // PrepareUpdateSourceData ...
 func (p *presenter) PrepareUpdateSourceData(source *entity.Source, data string, nextStep entity.Step) sources.Update {
 	switch nextStep {

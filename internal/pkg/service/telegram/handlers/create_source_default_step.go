@@ -42,7 +42,7 @@ func (h *Handler) createSourceDefaultMenu(ctx context.Context, b *bot.Bot, chatI
 	kb := &models.InlineKeyboardMarkup{
 		InlineKeyboard: [][]models.InlineKeyboardButton{
 			{
-				{Text: menu.DoNotCreateSource.String(), CallbackData: default_menu}, //TODO сделать handler
+				{Text: menu.DoNotCreateSource.String(), CallbackData: delete_source_default}, //TODO сделать handler
 			},
 			{
 				{Text: BackTo + Library, CallbackData: general_start},

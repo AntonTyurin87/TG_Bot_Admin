@@ -29,4 +29,11 @@ const (
 	InstructionsAddSourceDescription Instructions = "Укажите описание источника. Не более 500 знаков."
 	InstructionsAddSourceFile        Instructions = "Скопируйте файл источника и нажмите *\"Send\"*."
 	InstructionsAddSourceSuccess     Instructions = "Источник успешно создан. Для загрузки в библиотеку нажмите кнопку - "
+	InstructionsDeleteSourceSuccess  Instructions = "🗑️ Заготовка источника успешно удалена."
+
+	InstructionsContinueCreatingSource Instructions = "📌 У Вас уже есть заготовка для создания источника. Можем продолжить прямо сейчас."
 )
+
+func (i Instructions) String() string {
+	return string(i)
+}
