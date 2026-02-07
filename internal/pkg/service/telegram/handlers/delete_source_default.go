@@ -39,16 +39,12 @@ func (h *Handler) deleteSourceDefaultMenu(ctx context.Context, b *bot.Bot, chatI
 		return //TODO логирование
 	}
 	// если источника нет или он готов к отправке, то не удаляем
-	if source == nil || source.Step > entity.SourceLoadFileStep {
+	if source == nil || source.Step > entity.SourceDownloadURLStep {
 		return //TODO логирование
 	}
 
 	// удаляем источник и файл к нему
-	sourceID := h.adminService.DeleteLibrarianSourceItem(ctx, userID)
-	if sourceID == 0 {
-		_ = h.adminService.DeleteLibrarianSourceFile(ctx, sourceID)
-		//TODO логирование
-	}
+	_ = h.adminService.DeleteLibrarianSourceItem(ctx, userID)
 
 	//TODO формируем набор кнопок - убрать в функцию презентера
 

@@ -21,7 +21,7 @@ func (p *presenter) CollbackKeyNameBySourceStep(step entity.Step) menu.KeyName {
 		return menu.KeyNameAddSourceDescription
 	case entity.SourceDescriptionStep:
 		return menu.KeyNameAddSourceFile
-	case entity.SourceLoadFileStep:
+	case entity.SourceDownloadURLStep:
 		return menu.KeyNameSourceSuccess
 	default:
 		return menu.UnknownKeyName
@@ -57,8 +57,11 @@ func (p *presenter) InstructionsBySourceStep(step entity.Step) texts.Instruction
 		return texts.InstructionsAddSourceDescription
 	case entity.SourceDescriptionStep:
 		return texts.InstructionsAddSourceFile
-	case entity.SourceLoadFileStep:
+	case entity.SourceDownloadURLStep:
 		return texts.InstructionsAddSourceSuccess
+	case entity.SourceReadyToSend:
+		return texts.InstructionsSourceSendToSave
+
 	default:
 		return texts.InstructionsUnknown
 	}

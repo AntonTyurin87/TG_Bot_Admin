@@ -3,7 +3,6 @@ package telegram
 import (
 	"TG_Bot_Admin/internal/pkg/domain/entity"
 	"TG_Bot_Admin/internal/pkg/domain/menu"
-	"TG_Bot_Admin/internal/pkg/domain/texts"
 	"TG_Bot_Admin/internal/pkg/service/telegram/auth"
 	"context"
 	"fmt"
@@ -47,21 +46,7 @@ func (h *Handler) createLibrarianBookSourceMenu(ctx context.Context, b *bot.Bot,
 	// получаем текст для заголовка сообщения
 	messageText := h.presenter.TextMessageToCreateSource(book)
 
-	//TODO формируем набор кнопок - убрать в функцию презентера
-
-	kb := &models.InlineKeyboardMarkup{
-		InlineKeyboard: [][]models.InlineKeyboardButton{
-			{
-				{Text: menu.DoNotCreateSource.String(), CallbackData: delete_source_default}, //TODO сделать handler
-			},
-			{
-				{Text: BackTo + Library, CallbackData: general_start},
-			},
-			{
-				{Text: BackTo + ReconComGroup, URL: texts.KeyURLReconComGroupURL.String()},
-			},
-		},
-	}
+	kb := h.presenter.KeyBlockToCreateSource(book)
 
 	b.SendMessage(ctx, &bot.SendMessageParams{
 		ChatID:      chatID,
@@ -84,19 +69,7 @@ func (h *Handler) continueSourceCreatingMenu(ctx context.Context, b *bot.Bot, ch
 	// получаем текст для заголовка сообщения
 	messageText := h.presenter.TextMessageToContinueSource(source)
 
-	kb := &models.InlineKeyboardMarkup{
-		InlineKeyboard: [][]models.InlineKeyboardButton{
-			{
-				{Text: menu.DoNotCreateSource.String(), CallbackData: delete_source_default},
-			},
-			{
-				{Text: BackTo + Library, CallbackData: general_start},
-			},
-			{
-				{Text: BackTo + ReconComGroup, URL: texts.KeyURLReconComGroupURL.String()},
-			},
-		},
-	}
+	kb := h.presenter.KeyBlockToCreateSource(source)
 
 	b.SendMessage(ctx, &bot.SendMessageParams{
 		ChatID:      chatID,

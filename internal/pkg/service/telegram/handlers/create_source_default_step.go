@@ -1,8 +1,6 @@
 package telegram
 
 import (
-	"TG_Bot_Admin/internal/pkg/domain/menu"
-	"TG_Bot_Admin/internal/pkg/domain/texts"
 	"TG_Bot_Admin/internal/pkg/service/telegram/auth"
 	"fmt"
 
@@ -37,21 +35,7 @@ func (h *Handler) createSourceDefaultMenu(ctx context.Context, b *bot.Bot, chatI
 	// получаем текст для заголовка сообщения
 	messageText := h.presenter.TextMessageToCreateSource(source)
 
-	//TODO формируем набор кнопок - убрать в функцию презентера
-
-	kb := &models.InlineKeyboardMarkup{
-		InlineKeyboard: [][]models.InlineKeyboardButton{
-			{
-				{Text: menu.DoNotCreateSource.String(), CallbackData: delete_source_default}, //TODO сделать handler
-			},
-			{
-				{Text: BackTo + Library, CallbackData: general_start},
-			},
-			{
-				{Text: BackTo + ReconComGroup, URL: texts.KeyURLReconComGroupURL.String()},
-			},
-		},
-	}
+	kb := h.presenter.KeyBlockToCreateSource(source)
 
 	b.SendMessage(ctx, &bot.SendMessageParams{
 		ChatID:      chatID,

@@ -2,8 +2,6 @@ package dto
 
 import (
 	"TG_Bot_Admin/internal/pkg/domain/entity"
-
-	"github.com/golang/protobuf/ptypes/timestamp"
 )
 
 const (
@@ -17,10 +15,8 @@ const (
 	SourcesColumnNameENG     = "name_eng"
 	SourcesColumnAuthorRU    = "author_ru"
 	SourcesColumnYear        = "year"
-	SourcesColumnRegions     = "regions"
-	SourcesColumnTimePeriods = "time_periods"
 	SourcesColumnDescription = "description"
-	SourcesColumnFileFormat  = "file_format"
+	SourcesColumnDownloadURL = "download_url"
 	SourcesColumnCreatedAt   = "created_at"
 	SourcesColumnIsSent      = "isSent"
 )
@@ -34,30 +30,26 @@ var SourcesColumns = []string{
 	SourcesColumnNameENG,
 	SourcesColumnAuthorRU,
 	SourcesColumnYear,
-	SourcesColumnRegions,
-	SourcesColumnTimePeriods,
 	SourcesColumnDescription,
-	SourcesColumnFileFormat,
+	SourcesColumnDownloadURL,
 	SourcesColumnCreatedAt,
 	SourcesColumnIsSent,
 }
 
 // Source ...
 type Source struct {
-	ID          int64                `json:"id"`
-	UserID      int64                `json:"user_id"`
-	Step        int64                `json:"step"`
-	Type        string               `json:"type"`
-	NameRU      string               `json:"name_ru"`
-	NameENG     string               `json:"name_eng"`
-	AuthorRU    string               `json:"author_ru"`
-	Year        int64                `json:"year"`
-	Regions     string               `json:"regions"`
-	TimePeriods string               `json:"time_periods"`
-	Description string               `json:"description"`
-	FileFormat  string               `json:"file_format"`
-	CreatedAt   *timestamp.Timestamp `json:"created_at"`
-	IsSent      int64                `json:"isSent"`
+	ID          int64  `json:"id"`
+	UserID      int64  `json:"user_id"`
+	Step        int64  `json:"step"`
+	Type        string `json:"type"`
+	NameRU      string `json:"name_ru"`
+	NameENG     string `json:"name_eng"`
+	AuthorRU    string `json:"author_ru"`
+	Year        int64  `json:"year"`
+	Description string `json:"description"`
+	DownloadURL string `json:"download_url"`
+	CreatedAt   string `json:"created_at"`
+	IsSent      int64  `json:"isSent"`
 }
 
 // GetID ...
@@ -124,22 +116,6 @@ func (s *Source) GetYear() int64 {
 	return s.Year
 }
 
-// GetRegions ...
-func (s *Source) GetRegions() string {
-	if s == nil {
-		return ""
-	}
-	return s.Regions
-}
-
-// GetTimePeriods ...
-func (s *Source) GetTimePeriods() string {
-	if s == nil {
-		return ""
-	}
-	return s.TimePeriods
-}
-
 // GetDescription ...
 func (s *Source) GetDescription() string {
 	if s == nil {
@@ -148,18 +124,17 @@ func (s *Source) GetDescription() string {
 	return s.Description
 }
 
-// GetFileFormat ...
-func (s *Source) GetFileFormat() string {
+func (s *Source) GetDownloadURL() string {
 	if s == nil {
 		return ""
 	}
-	return s.FileFormat
+	return s.DownloadURL
 }
 
 // GetCreatedAt ...
-func (s *Source) GetCreatedAt() *timestamp.Timestamp {
+func (s *Source) GetCreatedAt() string {
 	if s == nil {
-		return nil
+		return ""
 	}
 	return s.CreatedAt
 }
@@ -187,10 +162,8 @@ func (s *Source) Entity() *entity.Source {
 		NameENG:     s.GetNameENG(),
 		AuthorRU:    s.GetAuthorRU(),
 		Year:        s.GetYear(),
-		Regions:     s.GetRegions(),
-		TimePeriods: s.GetTimePeriods(),
 		Description: s.GetDescription(),
-		FileFormat:  s.GetFileFormat(),
+		DownloadURL: s.GetDownloadURL(),
 		CreatedAt:   s.GetCreatedAt(),
 		IsSent:      s.GetIsSent(),
 	}
@@ -218,10 +191,8 @@ func SourceDtoFromEntity(e *entity.Source) *Source {
 		NameENG:     e.GetNameENG(),
 		AuthorRU:    e.GetAuthorRU(),
 		Year:        e.GetYear(),
-		Regions:     e.GetRegions(),
-		TimePeriods: e.GetTimePeriods(),
 		Description: e.GetDescription(),
-		FileFormat:  e.GetFileFormat(),
+		DownloadURL: e.GetDownloadURL(),
 		CreatedAt:   e.GetCreatedAt(),
 		IsSent:      e.GetIsSent(),
 	}

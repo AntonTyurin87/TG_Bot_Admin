@@ -1,6 +1,8 @@
 package telegram
 
 import (
+	"TG_Bot_Admin/internal/pkg/domain/menu"
+
 	"github.com/go-telegram/bot"
 )
 
@@ -21,6 +23,7 @@ func (h *Handler) RegisterHandlers(b *bot.Bot) {
 	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, create_librarian_book_source, bot.MatchTypeExact, h.createLibrarianBookSourceHandler)
 	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, create_source_default, bot.MatchTypeExact, h.createLibrarianBookSourceHandler)
 	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, delete_source_default, bot.MatchTypeExact, h.deleteSourceDefaultHandler)
+	b.RegisterHandler(bot.HandlerTypeCallbackQueryData, menu.Send_source_to_save, bot.MatchTypeExact, h.sendSourceToSaveHandler)
 	// Меню для SimpleUser
 
 	//Обработчик всех текстовых сообщений

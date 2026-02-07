@@ -34,7 +34,7 @@ func (a *adminService) UpdateLibrarianSourceItem(ctx context.Context, userID int
 
 // TODO сделать нормальную валидацию
 func isValidText(text string, step entity.Step) bool {
-	if text == "" {
+	if text == "" && step != entity.SourceReadyToSend {
 		return false
 	}
 

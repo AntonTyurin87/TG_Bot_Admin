@@ -6,6 +6,8 @@ type KeyName string
 const (
 	UnknownKeyName KeyName = "Неизвестная кнопка"
 
+	Library KeyName = "📚 Библиотека"
+
 	CreateSource        KeyName = "➕ Добавить источник"
 	DoNotCreateSource   KeyName = "🙅 Не создавать это источник"
 	SaveLibrarianSource KeyName = "💾 Сохранить источник"
@@ -25,6 +27,12 @@ const (
 	KeyNameAddSourceFile        KeyName = "Послать файл источника "
 	KeyNameSourceSuccess        KeyName = "Посмотреть на источник"
 	KeyNameDeleteDraftSource    KeyName = "Удалить заготовку источника"
+
+	BackTo = "🔙 Вернуться в "
+
+	ReconComGroup = "группу Recom_Com"
+
+	Empty = "Пока пустой раздел"
 )
 
 // String ...

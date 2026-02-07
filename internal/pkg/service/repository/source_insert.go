@@ -31,10 +31,7 @@ func insertSourceQuery(query sources.Insert) sq.InsertBuilder {
 			dto.SourcesColumnNameENG,
 			dto.SourcesColumnAuthorRU,
 			dto.SourcesColumnYear,
-			dto.SourcesColumnRegions,
-			dto.SourcesColumnTimePeriods,
 			dto.SourcesColumnDescription,
-			dto.SourcesColumnFileFormat,
 			dto.SourcesColumnCreatedAt,
 			dto.SourcesColumnIsSent,
 		).
@@ -50,10 +47,7 @@ func insertSourceQuery(query sources.Insert) sq.InsertBuilder {
 			a.GetNameENG(),
 			a.GetAuthorRU(),
 			a.GetYear(),
-			a.GetRegions(),
-			a.GetTimePeriods(),
 			a.GetDescription(),
-			a.GetFileFormat(),
 			a.GetCreatedAt(),
 			a.GetIsSent(),
 		)

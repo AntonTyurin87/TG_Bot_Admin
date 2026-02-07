@@ -1,9 +1,5 @@
 package entity
 
-import (
-	"github.com/golang/protobuf/ptypes/timestamp"
-)
-
 type Step int64
 
 const (
@@ -14,11 +10,12 @@ const (
 	SourceAuthorsRUStep   Step = 4
 	SourceYearStep        Step = 5
 	SourceDescriptionStep Step = 6
-	SourceLoadFileStep    Step = 7 //Вот тут обновление CreatedAt
-	SourceReadyToSend     Step = 8
+	SourceDownloadURLStep Step = 7
+	SourceReadyToSend     Step = 8 //Вот тут обновление CreatedAt
 	SourceIsSentStep      Step = 9
 )
 
+// GetNextStep ...
 func (s Step) GetNextStep() Step {
 	switch s {
 	case CreateSourceStep:
@@ -32,8 +29,10 @@ func (s Step) GetNextStep() Step {
 	case SourceYearStep:
 		return SourceDescriptionStep
 	case SourceDescriptionStep:
-		return SourceLoadFileStep
-	case SourceLoadFileStep:
+		return SourceDownloadURLStep
+	case SourceDownloadURLStep:
+		return SourceReadyToSend
+	case SourceReadyToSend:
 		return SourceIsSentStep
 	default:
 		return UnknownStep
@@ -51,20 +50,18 @@ const (
 
 // Source ...
 type Source struct {
-	ID          int64                `json:"id"`
-	UserID      int64                `json:"user_id"`
-	Step        Step                 `json:"step"`
-	Type        SourceType           `json:"type"`
-	NameRU      string               `json:"name_ru"`
-	NameENG     string               `json:"name_eng"`
-	AuthorRU    string               `json:"author_ru"`
-	Year        int64                `json:"year"`
-	Regions     string               `json:"regions"`
-	TimePeriods string               `json:"time_periods"`
-	Description string               `json:"description"`
-	FileFormat  string               `json:"file_format"`
-	CreatedAt   *timestamp.Timestamp `json:"created_at"`
-	IsSent      int64                `json:"isSent"`
+	ID          int64      `json:"id"`
+	UserID      int64      `json:"user_id"`
+	Step        Step       `json:"step"`
+	Type        SourceType `json:"type"`
+	NameRU      string     `json:"name_ru"`
+	NameENG     string     `json:"name_eng"`
+	AuthorRU    string     `json:"author_ru"`
+	Year        int64      `json:"year"`
+	Description string     `json:"description"`
+	DownloadURL string     `json:"download_url"`
+	CreatedAt   string     `json:"created_at"`
+	IsSent      int64      `json:"isSent"`
 }
 
 // GetID ...
@@ -131,22 +128,6 @@ func (s *Source) GetYear() int64 {
 	return s.Year
 }
 
-// GetRegions ...
-func (s *Source) GetRegions() string {
-	if s == nil {
-		return ""
-	}
-	return s.Regions
-}
-
-// GetTimePeriods ...
-func (s *Source) GetTimePeriods() string {
-	if s == nil {
-		return ""
-	}
-	return s.TimePeriods
-}
-
 // GetDescription ...
 func (s *Source) GetDescription() string {
 	if s == nil {
@@ -155,18 +136,18 @@ func (s *Source) GetDescription() string {
 	return s.Description
 }
 
-// GetFileFormat ...
-func (s *Source) GetFileFormat() string {
+// GetDownloadURL ...
+func (s *Source) GetDownloadURL() string {
 	if s == nil {
 		return ""
 	}
-	return s.FileFormat
+	return s.DownloadURL
 }
 
 // GetCreatedAt ...
-func (s *Source) GetCreatedAt() *timestamp.Timestamp {
+func (s *Source) GetCreatedAt() string {
 	if s == nil {
-		return nil
+		return ""
 	}
 	return s.CreatedAt
 }

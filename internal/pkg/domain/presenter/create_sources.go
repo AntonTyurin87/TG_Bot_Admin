@@ -8,6 +8,9 @@ import (
 	"TG_Bot_Admin/internal/pkg/service/telegram/helpers"
 	"fmt"
 	"strconv"
+	"time"
+
+	"github.com/go-telegram/bot/models"
 )
 
 // KayNameFromCreateSource ...
@@ -26,6 +29,9 @@ func (p *presenter) TextMessageToCreateSource(source *entity.Source) string {
 
 	if text == texts.InstructionsAddSourceSuccess {
 		return fmt.Sprint(message, menu.SaveLibrarianSource)
+	}
+	if text == texts.InstructionsSourceSendToSave {
+		message = helpers.EscapeMarkdown(fmt.Sprintf("%s\n\n%s", title, texts.InstructionsSourceSendToSave.String()))
 	}
 
 	return message
@@ -60,8 +66,10 @@ func (p *presenter) PrepareUpdateSourceData(source *entity.Source, data string, 
 		source.Year, _ = strconv.ParseInt(data, 10, 64) //ошибку не обрабатываем
 	case entity.SourceDescriptionStep:
 		source.Description = data
-	case entity.SourceLoadFileStep:
-		source.FileFormat = data
+	case entity.SourceDownloadURLStep:
+		source.DownloadURL = helpers.PrepareURLForDownload(data)
+	case entity.SourceReadyToSend:
+		source.CreatedAt = time.Now().Format(time.RFC3339)
 	}
 
 	source.Step = nextStep
@@ -87,9 +95,33 @@ func (p *presenter) SourceStateText(source *entity.Source) string {
 			"*Описание:* %s\n", //TODO что-то про файл
 		source.NameRU, source.NameENG, source.AuthorRU, source.Year, source.Description)
 
-	if source.FileFormat != "" {
-		return text + "*Файл источника:* загружен\n"
+	return text
+}
+
+// KeyBlockToCreateSource ...
+func (p *presenter) KeyBlockToCreateSource(source *entity.Source) models.InlineKeyboardMarkup {
+	var kb models.InlineKeyboardMarkup
+
+	backToLibrary := []models.InlineKeyboardButton{{Text: menu.BackTo + menu.Library.String(), CallbackData: menu.General_start}}
+	backToReconCom := []models.InlineKeyboardButton{{Text: menu.BackTo + menu.ReconComGroup, URL: texts.KeyURLReconComGroupURL.String()}}
+
+	switch source.Step {
+	case
+		entity.CreateSourceStep,
+		entity.SourceNameRuStep,
+		entity.SourceNameENGStep,
+		entity.SourceAuthorsRUStep,
+		entity.SourceYearStep,
+		entity.SourceDescriptionStep:
+		kb.InlineKeyboard = append(kb.InlineKeyboard, []models.InlineKeyboardButton{{Text: menu.DoNotCreateSource.String(), CallbackData: menu.Delete_source_default}})
+	case entity.SourceDownloadURLStep:
+		kb.InlineKeyboard = append(kb.InlineKeyboard, []models.InlineKeyboardButton{{Text: menu.SaveLibrarianSource.String(), CallbackData: menu.Send_source_to_save}})
+		kb.InlineKeyboard = append(kb.InlineKeyboard, []models.InlineKeyboardButton{{Text: menu.DoNotCreateSource.String(), CallbackData: menu.Delete_source_default}})
+	default:
 	}
 
-	return text
+	kb.InlineKeyboard = append(kb.InlineKeyboard, backToLibrary)
+	kb.InlineKeyboard = append(kb.InlineKeyboard, backToReconCom)
+
+	return kb
 }

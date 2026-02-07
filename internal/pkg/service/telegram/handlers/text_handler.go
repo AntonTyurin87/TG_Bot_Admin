@@ -2,7 +2,6 @@ package telegram
 
 import (
 	"TG_Bot_Admin/internal/pkg/domain/entity"
-	"TG_Bot_Admin/internal/pkg/service/telegram/helpers"
 	"context"
 	"strings"
 
@@ -20,26 +19,23 @@ func (h *Handler) messageHandler(ctx context.Context, b *bot.Bot, update *models
 		return
 	}
 
-	// Проверяем состояние пользователя
-	if h.adminService.IsAnyNotFinishedSource(ctx, userID) {
-		// распознание ссылки для скачивания файла и готовности источника к приёму файла
-		if helpers.IsDownloadLink(ctx, text) || h.adminService.IsNowStep(ctx, entity.SourceDescriptionStep, userID) { //TODO проверка на определённый шаг
-			fileData, err := helpers.GetFileBytes(text)
-			if err != nil {
-				return //TODO как-то обрабатывать эту ситуацию
-			}
-
-			_, err = h.adminService.CreateLibrarianSourceFile(ctx, fileData, userID)
-			if err != nil {
-				return //TODO как-то обрабатывать эту ситуацию
-			}
-
-			text = "FileType?" //TODO передавать тип файла  (предварительно где-то его взять)
-		}
-
+	// Проверяем состояние пользователя и источника
+	if h.adminService.IsAnyNotFinishedSource(ctx, userID) && h.adminService.IsStepLessThen(ctx, entity.SourceReadyToSend, userID) {
 		// записываем текс в БД
 		h.adminService.UpdateLibrarianSourceItem(ctx, userID, text)
 		// вызываем дефолтный хендлер для сохранения источника
 		h.createSourceDefaultHandler(ctx, b, update)
 	}
 }
+
+// TODO передать в Librarian НЕ УДАЛЯТЬ!
+//func (h *Handler) createLibrarianSourceFile(ctx context.Context, text string, userID int64) (string, error) {
+//	fileURL := helpers.PrepareURLForDownload(text)
+//
+//	fileData, fileExtension, err := helpers.GetFileBytes(fileURL)
+//	if err != nil {
+//		return "", nil //TODO как-то обрабатывать эту ситуацию
+//	}
+//
+//	return fileExtension, nil
+//}

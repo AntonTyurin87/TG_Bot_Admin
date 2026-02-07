@@ -53,19 +53,13 @@ func updateSourceQuery(query sources.Update) sq.UpdateBuilder {
 		if source.Year != 0 {
 			updateQuery = updateQuery.Set(dto.SourcesColumnYear, source.Year)
 		}
-		if source.Regions != "" {
-			updateQuery = updateQuery.Set(dto.SourcesColumnRegions, source.Regions)
-		}
-		if source.TimePeriods != "" {
-			updateQuery = updateQuery.Set(dto.SourcesColumnTimePeriods, source.TimePeriods)
-		}
 		if source.Description != "" {
 			updateQuery = updateQuery.Set(dto.SourcesColumnDescription, source.Description)
 		}
-		if source.FileFormat != "" {
-			updateQuery = updateQuery.Set(dto.SourcesColumnFileFormat, source.FileFormat)
+		if source.DownloadURL != "" {
+			updateQuery = updateQuery.Set(dto.SourcesColumnDownloadURL, source.DownloadURL)
 		}
-		if source.CreatedAt != nil {
+		if source.CreatedAt != "" {
 			updateQuery = updateQuery.Set(dto.SourcesColumnCreatedAt, source.CreatedAt)
 		}
 		if source.IsSent != 0 {
